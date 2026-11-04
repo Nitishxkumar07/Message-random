@@ -3,14 +3,15 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { dbConnect } from "@/lib/dbConnect";
 import UserModel from "@/model/User";
+import { authConfig } from "./auth.config";
 
+/**
+ * Full Node.js auth config — used by API routes and Server Components.
+ * Spreads the Edge-safe authConfig and overrides the Credentials provider
+ * with the real authorize() function (bcrypt + mongoose).
+ */
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    session: {
-        strategy: "jwt",
-    },
-    pages: {
-        signIn: "/sign-in",
-    },
+    ...authConfig,
     providers: [
         Credentials({
             name: "Credentials",
@@ -59,25 +60,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         }),
     ],
-    callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token._id = user._id;
-                token.isVerified = user.isVerified;
-                token.isAcceptingMessages = user.isAcceptingMessages;
-                token.username = user.username;
-            }
-            return token;
-        },
-        async session({ session, token }) {
-            if (token && session.user) {
-                session.user._id = token._id as string;
-                session.user.isVerified = token.isVerified as boolean;
-                session.user.isAcceptingMessages = token.isAcceptingMessages as boolean;
-                session.user.username = token.username as string;
-            }
-            return session;
-        },
-    },
 });
-

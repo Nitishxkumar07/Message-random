@@ -1,21 +1,14 @@
 import { dbConnect } from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { UsernameValidation } from "@/schemas/signUpSchema";
-import { success, z } from 'zod';
+import { z } from 'zod';
+// Bug Fix: Removed invalid `import { success }` from zod — it doesn't exist
 
 const UsernameQuerySchema = z.object({
     username: UsernameValidation
 })
 
 export async function GET(request: Request) {
-
-    // if (request.method !== 'GET') {
-    //     return Response.json({
-    //         success: false,
-    //         message: "Method is not allowed"
-    //     }, { status: 405 })
-    // }
-
     await dbConnect();
 
     try {
@@ -28,8 +21,8 @@ export async function GET(request: Request) {
             const usernameErrors = result.error.format().username?._errors || []
             return Response.json({
                 success: false,
-                message: usernameErrors?.length > 0 ? usernameErrors.join(', ') : "invalid Query Parameter"
-            })
+                message: usernameErrors?.length > 0 ? usernameErrors.join(', ') : "Invalid query parameter"
+            }, { status: 400 })
         }
         const { username } = result.data
 
@@ -38,25 +31,24 @@ export async function GET(request: Request) {
         if (existingVerifiedUser) {
             return Response.json({
                 success: false,
-                message: "username is already taken"
+                message: "Username is already taken"
             }, { status: 400 })
         }
+
+        // Bug Fix: Was returning status: 400 on success — now correctly returns 200
         return Response.json({
             success: true,
-            message: "username is available"
-        }, { status: 400 })
+            message: "Username is available"
+        }, { status: 200 })
 
     } catch (error) {
-        console.log("Error checking Username ", error)
+        console.error("Error checking username:", error)
         return Response.json(
             {
                 success: false,
-                message: "Error Checking username"
+                message: "Error checking username"
             },
-            {
-                status: 500
-            }
+            { status: 500 }
         )
     }
 }
-
