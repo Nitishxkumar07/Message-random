@@ -3,7 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import mongoose from "mongoose";
 
-export async function GET(request: Request) {
+export async function GET() {
     await dbConnect();
     const session = await auth();
 
@@ -14,18 +14,16 @@ export async function GET(request: Request) {
         );
     }
 
-    const userId = new mongoose.Types.ObjectId(session.user._id);
-
     try {
-        // Bug Fix 1: Added `await` — aggregate() returns a Promise, was being treated as value
-        // Bug Fix 2: `$match: { id: userId }` → `$match: { _id: userId }` (MongoDB uses _id)
-        // Bug Fix 3: `$unwind: 'messages'` → `$unwind: '$messages'` ($ prefix required for field refs)
+        const userId = new mongoose.Types.ObjectId(session.user._id);
+
         const user = await UserModel.aggregate([
             { $match: { _id: userId } },
-            { $unwind: '$messages' },
+            // keep users who have no messages yet
+            { $unwind: { path: '$messages', preserveNullAndEmptyArrays: true } },
             { $sort: { 'messages.createdAt': -1 } },
-            { $group: { _id: '$_id', messages: { $push: '$messages' } } }
-        ])
+            { $group: { _id: '$_id', messages: { $push: '$messages' } } },
+        ]);
 
         if (!user || user.length === 0) {
             return Response.json(
@@ -34,12 +32,11 @@ export async function GET(request: Request) {
             );
         }
 
-        return Response.json(
-            { success: true, messages: user[0].messages },
-            { status: 200 }
-        );
+        const messages = (user[0].messages ?? []).filter(Boolean);
+
+        return Response.json({ success: true, messages }, { status: 200 });
     } catch (error) {
-        console.error("Error getting messages:", error)
+        console.error("Error getting messages:", error);
         return Response.json(
             { success: false, message: "Cannot get messages for user" },
             { status: 500 }

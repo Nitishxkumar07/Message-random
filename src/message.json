@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Message from Sarah Jenkins",
+    "content": "Hey, loved your latest post about cloud architecture! Would love to chat more about it sometime.",
+    "received_in": "10 minutes ago"
+  },
+  {
+    "title": "Message from TechGuy99",
+    "content": "Thanks for sharing those code snippets, they saved me hours of troubleshooting today.",
+    "received_in": "45 minutes ago"
+  },
+  {
+    "title": "Message from Alex Rivers",
+    "content": "Great insights on the new UI update! Are you planning to write a follow-up article?",
+    "received_in": "2 hours ago"
+  },
+  {
+    "title": "Message from Maya Patel",
+    "content": "Hi there! Just wanted to let you know your design tutorial was super helpful.",
+    "received_in": "5 hours ago"
+  },
+  {
+    "title": "Message from David Kim",
+    "content": "Can you check the link in your latest post? It seems to be pointing to a 404 page.",
+    "received_in": "18 hours ago"
+  },
+  {
+    "title": "Message from Elena Rostova",
+    "content": "Congratulations on reaching 10k followers! Well deserved milestone.",
+    "received_in": "1 day ago"
+  },
+  {
+    "title": "Message from Marcus Vance",
+    "content": "Hey, do you have any book recommendations for learning rust programming?",
+    "received_in": "3 days ago"
+  },
+  {
+    "title": "Message from Chloe Bennett",
+    "content": "Awesome write-up on productivity systems. I adopted your time-blocking method this week!",
+    "received_in": "5 days ago"
+  },
+  {
+    "title": "Message from Liam Thorne",
+    "content": "Let me know if you're open to collaborating on an open-source project next month.",
+    "received_in": "1 week ago"
+  },
+  {
+    "title": "Message from Sophia Zhang",
+    "content": "Checking in to see if you received the draft deck I sent over last Tuesday.",
+    "received_in": "2 weeks ago"
+  }
+]
