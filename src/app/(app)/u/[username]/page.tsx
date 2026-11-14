@@ -149,7 +149,7 @@ const PublicProfile = () => {
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-500 to-fuchsia-500 opacity-40 blur-md" />
             <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-600 to-fuchsia-600 text-2xl font-bold uppercase text-white shadow-lg ring-4 ring-white">
-              {username}
+              {username.toString().slice(0, 1)}
             </div>
           </div>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -157,7 +157,7 @@ const PublicProfile = () => {
           </h1>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm text-slate-500">
             <ShieldCheck className="h-4 w-4 text-emerald-500" />
-            to <span className="font-semibold text-slate-800">@{username}</span> · your identity stays hidden
+            to <span className="font-semibold text-slate-800">@{username}</span> ● your identity stays hidden
           </p>
         </header>
 

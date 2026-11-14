@@ -3,41 +3,38 @@ import { dbConnect } from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import mongoose from "mongoose";
 
-export async function DELETE(request: Request, { params }: { params: { messageid: string } }) {
-    const messageId = params.messageid
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ messageid: string }> }   // Promise in Next 15
+) {
+  const { messageid } = await params;                       // must be awaited
+
+  const session = await auth();
+  if (!session?.user?._id) {
+    return Response.json({ success: false, message: "Not Authenticated" }, { status: 401 });
+  }
+
+  if (!mongoose.isValidObjectId(messageid) || !mongoose.isValidObjectId(session.user._id)) {
+    return Response.json({ success: false, message: "Invalid id" }, { status: 400 });
+  }
+
+  try {
     await dbConnect();
-    const session = await auth();
 
-    if (!session || !session.user) {
-        return Response.json(
-            { success: false, message: "Not Authenticated" },
-            { status: 401 }
-        );
+    const result = await UserModel.updateOne(
+      { _id: new mongoose.Types.ObjectId(session.user._id) },
+      { $pull: { messages: { _id: new mongoose.Types.ObjectId(messageid) } } }
+    );
+
+    if (result.modifiedCount === 0) {
+      return Response.json(
+        { success: false, message: "Message not found or already deleted" },
+        { status: 404 }
+      );
     }
-
-    const userId = new mongoose.Types.ObjectId(session.user._id);
-
-    try {
-        const updatedResult = await UserModel.updateOne(
-            { _id: userId._id },
-            { $pull: { messages: { _id: messageId } } }
-        )
-        if (updatedResult.modifiedCount == 0) {
-            return Response.json(
-                { success: false, message: "Message Not found or already deleted" },
-                { status: 404 }
-            );
-        }
-        return Response.json(
-            { success: true, message: "Message deleted sucessfully" },
-            { status: 201 }
-        );
-
-    } catch (error) {
-        console.error("Error getting messages:", error)
-        return Response.json(
-            { success: false, message: "Error deleting message" },
-            { status: 500 }
-        );
-    }
+    return Response.json({ success: true, message: "Message deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return Response.json({ success: false, message: "Error deleting message" }, { status: 500 });
+  }
 }
