@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 import { User } from 'next-auth'
 import { Button } from './ui/button'
+import ChatAI from './ChatAI'
 const Navbar = () => {
 
     const { data: session } = useSession()
@@ -14,7 +15,7 @@ const Navbar = () => {
                 <a href="/" className="text-lg font-semibold tracking-tight text-slate-900 transition-colors hover:text-slate-700">MSG Random</a>
                 <div>
                     <div>
-                        
+                       
                     </div>
                     {
                         session ? (
